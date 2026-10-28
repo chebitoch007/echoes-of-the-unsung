@@ -6,12 +6,30 @@ Pick a genre (Tech, Agri, Education), pick a person who shaped society but got l
 
 ## Status
 Work in progress. Started Wed Oct 28, 2026, inside the challenge window.
+Submission deadline: Sun Nov 1, 2026, 09:59 EAT.
+
+| Part | State |
+|---|---|
+| Data file (`data/people.json`) | Empty schema, no people yet |
+| App (`app.py`) | Streamlit skeleton, genre and person pickers work |
+| Open-source model | Not connected yet |
+| Source texts and citations | Not added yet |
 
 ## Open-source AI used
 (To fill in: model name, how it runs locally.)
 
 ## How to run
-(To fill in.)
+```
+pip install streamlit
+streamlit run app.py
+```
+Until people are added to the data file, the app shows "No people added yet."
+
+## Project layout
+| Path | What it is |
+|---|---|
+| `app.py` | Streamlit app: pick a genre, pick a person, ask the ghost |
+| `data/people.json` | People and their source texts (schema is documented inside the file) |
 
 ## Sources and credits
 (Every source text, its licence, and a link.)

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "genres": ["Tech", "Agri", "Education"],
+  "fields": {
+    "id": "short unique slug, e.g. 'jane-doe'",
+    "name": "person's full name",
+    "genre": "one of the values in 'genres'",
+    "years": "e.g. '1900-1980', or null if unknown",
+    "why_unsung": "one plain sentence on why they got little credit",
+    "sources": [
+      {
+        "title": "name of the source text",
+        "url": "link to the source",
+        "licence": "e.g. 'CC BY-SA 4.0' or 'Public domain'",
+        "excerpt": "the exact fixed text the narrator may answer from"
+      }
+    ]
+  },
+  "people": []
+}
