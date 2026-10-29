@@ -30,13 +30,21 @@ def show_citation(n):
     c = n.citation
     if not c:
         return
+    credit = f"{c.get('author') or 'Unknown author'}, {c['licence']}"
     st.markdown("**Citation**")
     st.markdown(
+        f"- Credit: {credit}\n"
         f"- Source: {c['title']}\n"
         f"- URL: {c['url']}\n"
-        f"- Licence: {c['licence']}\n"
+        f"- Licence: {c['licence']}" + (f" ({c['licence_url']})" if c.get("licence_url") else "") + "\n"
         f"- Supporting quote: {('\u201c' + n.quote + '\u201d') if n.quote else 'none (no supported answer)'}"
     )
+
+
+def team_note(person):
+    """The why_unsung line, without its 'Team note:' prefix (the screen adds a label)."""
+    note = (person.get("why_unsung") or "").strip()
+    return note[len("Team note:"):].strip() if note.lower().startswith("team note:") else note
 
 
 def main():
@@ -62,6 +70,11 @@ def main():
     person = st.selectbox("Person", in_genre, format_func=lambda p: p["name"])
     if person.get("living"):
         st.caption("This person is living. The ghost only describes what the source says about them.")
+
+    note = team_note(person)
+    if note:
+        st.markdown(f"**Team note:** {note}")
+        st.caption("Written by the team. It is not part of the source text.")
 
     question = st.text_input("Ask the ghost")
     if st.button("Ask") and question.strip():
