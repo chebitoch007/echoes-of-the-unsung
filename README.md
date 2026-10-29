@@ -14,6 +14,8 @@ Submission deadline: Sun Nov 1, 2026, 09:59 EAT.
 | Model call (`narrator.py`) | Written. Unit-tested with a fake model. Not yet run against a real Gemma 4 model. |
 | Safety check (`grounding.py`) | Written and unit-tested. |
 | People and source texts | 6 people added (2 Tech, 2 Agri, 2 Education). Excerpts copied from Wikipedia on 2026-10-29. |
+| Screen details | Shows the "Team note" for each person (labelled, not part of the source) and "Wikipedia contributors, CC BY-SA 4.0" with every citation |
+| Tests | 83 pass with a fake model, including a grounding test for each of the 6 people |
 | Eval | 10 questions and a runner are written. No real run yet, so there is no `eval/results.md`. |
 
 ## Open-source AI used
@@ -32,6 +34,8 @@ How the ghost stays honest:
 | No invented quotes | Instruction in the prompt, plus a code check that rejects quoted words that are not in the excerpt |
 | Answers only from one excerpt | The prompt contains only that excerpt |
 | Every answer is backed by the source | The model must return a `supporting_quote`. Code checks it appears word for word in the excerpt (spaces and case ignored). If not: "That is not in my sources." |
+| Living people (Perlman, Wambugu) | The prompt tells the model the person is living and to state only what the excerpt says. The narrator speaks about them, never as them. |
+| Vague wording in the source | The prompt says not to guess what a vague reference means. For Wambugu's 2004 line ("the project had failed"), a code guard also refuses any answer that says "fail" and names a project the excerpt does not name. |
 | Labelled | The screen says "AI-generated narration" |
 
 The check proves the quote is in the excerpt. It does not prove the answer is a good summary of that quote.
@@ -75,9 +79,11 @@ Tested so far: Python 3.12 and Streamlit 1.66 in a test environment, with a fake
 | `eval/` | Eval questions and runner |
 
 ## Sources and credits
-- Source excerpts are copied from Wikipedia pages and stay under **CC BY-SA 4.0** ([licence text](https://creativecommons.org/licenses/by-sa/4.0/)). The authors of each page are listed in its Wikipedia page history. Each entry in `data/people.json` records the page title, URL, licence, the date copied and the page's last-edited time.
+- Source excerpts are copied from Wikipedia pages and stay under **CC BY-SA 4.0** ([licence text](https://creativecommons.org/licenses/by-sa/4.0/)). The code in this repo is **MIT** licensed. The excerpts keep their own CC BY-SA 4.0 licence.
+- Every citation in the app shows "Wikipedia contributors, CC BY-SA 4.0", the page title, the URL and the supporting quote. The authors of each page are listed in its Wikipedia page history.
+- Each entry in `data/people.json` records the page title, URL, licence, the date copied and the page's last-edited time.
 - Excerpts were copied from page text pasted by a team member on 2026-10-29. Citation markers like [1] were removed. Passages from different parts of a page are separated by a blank line.
-- The code in this repo is **MIT** licensed. The excerpts keep their own CC BY-SA 4.0 licence.
+- The "Team note" lines (`why_unsung`) and the `years` field are written by the team. They are not Wikipedia text, and the app labels them.
 - Gemma 4: see the model page links above.
 
 | Person | Genre | Living | Source page | Page last edited (UTC) |
@@ -89,7 +95,7 @@ Tested so far: Python 3.12 and Streamlit 1.66 in a test environment, with a fake
 | Savitribai Phule | Education | No | [Wikipedia](https://en.wikipedia.org/wiki/Savitribai_Phule) | 2026-10-15 17:23 |
 | James Emman Kwegyir Aggrey | Education | No | [Wikipedia](https://en.wikipedia.org/wiki/James_Emman_Kwegyir_Aggrey) | 2026-10-23 22:37 |
 
-The `years` and `why_unsung` fields in the data file are team notes, not Wikipedia text.
+Known differences from the live pages (checked Thu Oct 29, 2026): the Perlman and Phule excerpts do not match the live Wikipedia text word for word in 4 places. The other four match. These differences are not fixed yet.
 
 ## AI disclosure
 Narration is AI-generated. People and sources were chosen by humans.
