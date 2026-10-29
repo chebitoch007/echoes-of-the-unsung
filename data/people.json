@@ -1,10 +1,15 @@
 {
   "schema_version": 1,
-  "genres": ["Tech", "Agri", "Education"],
+  "genres": [
+    "Tech",
+    "Agri",
+    "Education"
+  ],
   "fields": {
     "id": "short unique slug, e.g. 'jane-doe'",
     "name": "person's full name",
     "genre": "one of the values in 'genres'",
+    "living": "true if the person is alive, otherwise false (affects how the app describes them)",
     "years": "e.g. '1900-1980', or null if unknown",
     "why_unsung": "one plain sentence on why they got little credit",
     "sources": [
