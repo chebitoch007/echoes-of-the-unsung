@@ -74,7 +74,21 @@ class GroundingResult:
     reason: str = ""  # why it was rejected (for logs and the eval), not shown to users
 
 
-def check_answer(raw_model_output: str, excerpt: str) -> GroundingResult:
+def violates_guard(answer: str, guards: Optional[list]) -> Optional[str]:
+    """Return the guard's reason if the answer fills a gap the excerpt leaves open.
+
+    A guard is {"when_answer_contains": [...], "must_not_contain": [...], "why": "..."}.
+    It trips when the answer has any 'when' word AND any 'must_not' word.
+    """
+    low = answer.lower()
+    for g in guards or []:
+        if any(w.lower() in low for w in g.get("when_answer_contains", [])) and \
+           any(w.lower() in low for w in g.get("must_not_contain", [])):
+            return g.get("why", "guard")
+    return None
+
+
+def check_answer(raw_model_output: str, excerpt: str, guards: Optional[list] = None) -> GroundingResult:
     """Decide whether the model output may be shown to the user."""
     data = parse_model_json(raw_model_output)
     if data is None:
@@ -96,5 +110,8 @@ def check_answer(raw_model_output: str, excerpt: str) -> GroundingResult:
     for inner in _QUOTED_TEXT.findall(answer):
         if len(inner.split()) >= MIN_QUOTE_WORDS and not quote_in_excerpt(inner, excerpt):
             return GroundingResult(False, reason="invented_quote_in_answer")
+
+    if violates_guard(answer, guards):
+        return GroundingResult(False, reason="guard_unsupported_link")
 
     return GroundingResult(True, answer=answer, quote=quote)

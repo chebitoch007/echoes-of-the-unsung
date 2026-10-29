@@ -40,8 +40,9 @@ def test_grounded_answer_is_shown_with_citation():
     m = FakeModel(reply("She built the first widget.", "built the first widget in 1970"))
     r = answer_question(m, PERSON, "What did she build?")
     assert r.status == "ok" and r.quote == "built the first widget in 1970"
-    assert r.citation == {"title": "Test page", "url": "https://example.org/test",
-                          "licence": "CC BY-SA 4.0"}
+    assert {k: r.citation[k] for k in ("title", "url", "licence")} == {
+        "title": "Test page", "url": "https://example.org/test", "licence": "CC BY-SA 4.0"}
+    assert set(r.citation) >= {"licence_url", "author"}
 
 
 def test_made_up_quote_shows_not_in_sources():
