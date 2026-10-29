@@ -190,3 +190,10 @@ def test_model_name_from_env(monkeypatch):
     assert narrator.get_model_name() == "gemma4:e2b-it-qat"
     monkeypatch.delenv("OLLAMA_MODEL")
     assert narrator.get_model_name() == narrator.DEFAULT_MODEL
+
+
+def test_timeout_from_env(monkeypatch):
+    monkeypatch.setenv("OLLAMA_TIMEOUT", "42")
+    assert OllamaClient(model="m").timeout == 42.0
+    monkeypatch.delenv("OLLAMA_TIMEOUT")
+    assert OllamaClient(model="m").timeout == narrator.DEFAULT_TIMEOUT

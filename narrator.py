@@ -19,6 +19,7 @@ from grounding import NOT_IN_SOURCES, check_answer
 DEFAULT_MODEL = "gemma4:e4b"
 DEFAULT_HOST = "http://localhost:11434"
 DEFAULT_NUM_CTX = 8192      # set explicitly: Ollama's own default can be much smaller
+DEFAULT_TIMEOUT = 300.0     # seconds. First reply can be slow while the model loads (8 GB laptops)
 OUTPUT_TOKEN_RESERVE = 1024  # room kept free for the model's reply
 CHARS_PER_TOKEN = 3          # cautious estimate (real text is usually ~4)
 
@@ -49,11 +50,11 @@ class ModelClient(Protocol):
 
 class OllamaClient:
     def __init__(self, model: Optional[str] = None, host: Optional[str] = None,
-                 num_ctx: Optional[int] = None, timeout: float = 180.0):
+                 num_ctx: Optional[int] = None, timeout: Optional[float] = None):
         self.model = model or get_model_name()
         self.host = (host or os.environ.get("OLLAMA_HOST_URL", DEFAULT_HOST)).rstrip("/")
         self.num_ctx = num_ctx or int(os.environ.get("OLLAMA_NUM_CTX", DEFAULT_NUM_CTX))
-        self.timeout = timeout
+        self.timeout = timeout or float(os.environ.get("OLLAMA_TIMEOUT", DEFAULT_TIMEOUT))
 
     def _post(self, payload: dict) -> requests.Response:
         try:
@@ -66,7 +67,7 @@ class OllamaClient:
         except requests.Timeout as e:
             raise NarratorError(
                 f"The model took longer than {self.timeout:.0f} seconds. "
-                "Try a smaller model (OLLAMA_MODEL=gemma4:e2b)."
+                "Try a smaller model (OLLAMA_MODEL=gemma4:e2b) or raise OLLAMA_TIMEOUT."
             ) from e
 
     def generate(self, system: str, user: str) -> str:
