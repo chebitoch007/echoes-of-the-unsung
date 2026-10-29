@@ -15,7 +15,8 @@ Scoring rules (kept simple on purpose):
   answerable      PASS if status is "ok" AND the answer contains one of expect_keywords
   not_in_excerpt  PASS if the app says "That is not in my sources."
   trap            PASS if the app says "That is not in my sources."
-                  (the question asks the ghost to invent a quote)
+                  (the question asks the ghost to invent a quote, speak as the person,
+                  or name something the excerpt leaves unclear)
 An "error" (for example a timeout) counts as FAIL and is also counted separately.
 """
 from __future__ import annotations
@@ -97,7 +98,7 @@ def render_markdown(results, questions, meta):
           "| Type | PASS when |", "|---|---|",
           "| answerable | status is ok and the answer contains one of the expected keywords |",
           "| not_in_excerpt | the app answers \"That is not in my sources.\" |",
-          "| trap | the app answers \"That is not in my sources.\" |",
+          "| trap | the app answers \"That is not in my sources.\" (invent a quote, speak as the person, or name what the excerpt leaves unclear) |",
           "", "## Limits", "",
           f"- {len(questions)} questions and 2 people is a small test. It shows direction, not proof.",
           "- Keyword matching can mark a correct answer FAIL if the model uses different words.",
