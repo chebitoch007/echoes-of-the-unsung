@@ -1,13 +1,17 @@
 {
   "schema_version": 1,
-  "genres": ["Tech", "Agri", "Education"],
+  "genres": [
+    "Tech",
+    "Agri",
+    "Education"
+  ],
   "fields": {
     "id": "short unique slug, e.g. 'jane-doe'",
     "name": "person's full name",
     "genre": "one of the values in 'genres'",
     "living": "true if the person is alive, otherwise false (affects how the app describes them)",
     "years": "e.g. '1900-1980', or null if unknown. Team note, not part of the source excerpt",
-    "why_unsung": "one plain sentence on why they got little credit. Team note, not part of the source excerpt",
+    "why_unsung": "one plain sentence on why they got little credit. Team note, not part of the source excerpt. The app shows it labelled 'Team note'",
     "sources": [
       {
         "title": "name of the source text",
@@ -17,9 +21,11 @@
         "retrieved": "date the excerpt was copied (YYYY-MM-DD)",
         "page_last_edited_utc": "last-edited time shown on the source page, UTC",
         "note": "how the excerpt was copied and what was changed",
-        "excerpt": "the exact fixed text the narrator may answer from. Blank lines separate passages from different parts of the page; a supporting quote must sit inside one passage"
+        "excerpt": "the exact fixed text the narrator may answer from. Blank lines separate passages from different parts of the page; a supporting quote must sit inside one passage",
+        "author": "who to credit with every citation, e.g. 'Wikipedia contributors'"
       }
-    ]
+    ],
+    "guards": "optional list. Each guard is {when_answer_contains: [words], must_not_contain: [words], why: text}. If an answer contains any 'when' word AND any 'must_not' word, the app shows 'That is not in my sources.' Used where the excerpt is vague and the narrator must not fill the gap"
   },
   "people": [
     {
@@ -35,6 +41,7 @@
           "url": "https://en.wikipedia.org/wiki/Radia_Perlman",
           "licence": "CC BY-SA 4.0",
           "licence_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "author": "Wikipedia contributors",
           "retrieved": "2026-10-29",
           "page_last_edited_utc": "2026-09-18 13:52",
           "note": "Copied from the Wikipedia page text pasted by the user on 2026-10-29. Citation markers like [1] removed. Passages from different parts of the page are separated by a blank line. Text otherwise unchanged.",
@@ -55,6 +62,7 @@
           "url": "https://en.wikipedia.org/wiki/Gladys_West",
           "licence": "CC BY-SA 4.0",
           "licence_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "author": "Wikipedia contributors",
           "retrieved": "2026-10-29",
           "page_last_edited_utc": "2026-10-10 18:57",
           "note": "Copied from the Wikipedia page text pasted by the user on 2026-10-29. Citation markers like [1] removed. Passages from different parts of the page are separated by a blank line. Text otherwise unchanged.",
@@ -75,6 +83,7 @@
           "url": "https://en.wikipedia.org/wiki/Janaki_Ammal",
           "licence": "CC BY-SA 4.0",
           "licence_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "author": "Wikipedia contributors",
           "retrieved": "2026-10-29",
           "page_last_edited_utc": "2026-10-06 13:47",
           "note": "Copied from the Wikipedia page text pasted by the user on 2026-10-29. Citation markers like [1] removed. Passages from different parts of the page are separated by a blank line. Text otherwise unchanged.",
@@ -95,10 +104,28 @@
           "url": "https://en.wikipedia.org/wiki/Florence_Wambugu",
           "licence": "CC BY-SA 4.0",
           "licence_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "author": "Wikipedia contributors",
           "retrieved": "2026-10-29",
           "page_last_edited_utc": "2026-09-14 08:41",
           "note": "Copied from the Wikipedia page text pasted by the user on 2026-10-29. Citation markers like [1] removed. Passages from different parts of the page are separated by a blank line. Text otherwise unchanged.",
           "excerpt": "Florence Mūrìngì Wambūgū (born 23 August 1953) is a Kenyan plant pathologist specialized in virology and genetic engineering. Wambūgū is the founder and Director of Africa Harvest, Kenya.\n\nWambūgū was born on 23 August 1953 in Nyeri County, as the sixth-born child in a family of ten, four daughters and six sons.\n\nShe developed a genetically modified virus-resistant sweet potato.\n\nWambugu conducted research on banana tissue culture in conjunction with KARI, Kenya, John Innes Center in United Kingdom, and the Institute for Tropical and Subtropical Crops in South Africa. The project produced safe, disease-resistant and high yielding banana cultures that helped banana farmers in Kenya.\n\nWambugu's work and projects have been criticized by anti-biotechnology green organizations and protestors.\n\nIn February 2004, the science magazine, New Scientist, reported that the project had failed."
+        }
+      ],
+      "guards": [
+        {
+          "when_answer_contains": [
+            "fail"
+          ],
+          "must_not_contain": [
+            "banana",
+            "sweet potato",
+            "tissue culture",
+            "kari",
+            "john innes",
+            "sorghum",
+            "monsanto"
+          ],
+          "why": "The excerpt says only that 'the project had failed'. It does not say which project, so the narrator must not name one."
         }
       ]
     },
@@ -115,6 +142,7 @@
           "url": "https://en.wikipedia.org/wiki/Savitribai_Phule",
           "licence": "CC BY-SA 4.0",
           "licence_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "author": "Wikipedia contributors",
           "retrieved": "2026-10-29",
           "page_last_edited_utc": "2026-10-15 17:23",
           "note": "Copied from the Wikipedia page text pasted by the user on 2026-10-29. Citation markers like [1] removed. Passages from different parts of the page are separated by a blank line. Text otherwise unchanged.",
@@ -135,6 +163,7 @@
           "url": "https://en.wikipedia.org/wiki/James_Emman_Kwegyir_Aggrey",
           "licence": "CC BY-SA 4.0",
           "licence_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "author": "Wikipedia contributors",
           "retrieved": "2026-10-29",
           "page_last_edited_utc": "2026-10-23 22:37",
           "note": "Copied from the Wikipedia page text pasted by the user on 2026-10-29. Citation markers like [1] removed. Passages from different parts of the page are separated by a blank line. Text otherwise unchanged.",
