@@ -13,8 +13,8 @@ Submission deadline: Sun Nov 1, 2026, 09:59 EAT.
 | Screen (`app.py`) | Written. Checked with a fake model in a test run. |
 | Model call (`narrator.py`) | Written. Unit-tested with a fake model. Not yet run against a real Gemma 4 model. |
 | Safety check (`grounding.py`) | Written and unit-tested. |
-| Eval (`eval/run_eval.py`) | Script written. No real results yet, so there is no `eval/results.md`. |
-| People and source texts | None added yet (`data/people.json` is an empty schema) |
+| People and source texts | 6 people added (2 Tech, 2 Agri, 2 Education). Excerpts copied from Wikipedia on 2026-10-29. |
+| Eval | 10 questions and a runner are written. No real run yet, so there is no `eval/results.md`. |
 
 ## Open-source AI used
 **Gemma 4** (Google, open-weight), run locally through [Ollama](https://ollama.com). The app talks only to Ollama on your own computer (`localhost:11434`).
@@ -38,17 +38,19 @@ The check proves the quote is in the excerpt. It does not prove the answer is a 
 
 ## How to run
 1. Install [Ollama](https://ollama.com/download) and check it works: `ollama --version`
-2. Download a model: `ollama pull gemma4:e4b` (or `ollama pull gemma4:e2b` for a smaller laptop). Check with `ollama list`.
+2. Download a model and check it with `ollama list`:
+   - 16 GB RAM or more: `ollama pull gemma4:e4b`
+   - Smaller laptop: a smaller Gemma 4 tag. The team's 8 GB laptop uses `gemma4:e2b-it-qat` (4.3 GB).
 3. Install the Python packages: `pip install -r requirements.txt`
-4. Choose the model (skip this if you pulled `gemma4:e4b`):
-   - Windows PowerShell: `$env:OLLAMA_MODEL="gemma4:e2b"`
-   - Mac or Linux: `export OLLAMA_MODEL=gemma4:e2b`
+4. Tell the app which model you pulled (skip this if you pulled `gemma4:e4b`):
+   - Windows PowerShell: `$env:OLLAMA_MODEL="gemma4:e2b-it-qat"`
+   - Mac or Linux: `export OLLAMA_MODEL=gemma4:e2b-it-qat`
 5. Start the app: `streamlit run app.py`
 
 Run the tests (no Ollama needed): `python -m pytest`
 
 Run the eval (needs Ollama and the models installed; writes `eval/results.md` only after a real run):
-`python eval/run_eval.py`. Choose models with `EVAL_MODELS=gemma4:e4b,gemma4:e2b`.
+`python eval/run_eval.py`. Choose models with `EVAL_MODELS`, for example `$env:EVAL_MODELS="gemma4:e2b-it-qat"`.
 
 Settings:
 
@@ -56,7 +58,9 @@ Settings:
 |---|---|---|
 | `OLLAMA_MODEL` | Model tag | `gemma4:e4b` |
 | `OLLAMA_NUM_CTX` | Context window sent to Ollama | `8192` |
+| `OLLAMA_TIMEOUT` | Seconds to wait for a reply (first reply is slower while the model loads) | `300` |
 | `OLLAMA_HOST_URL` | Where Ollama runs | `http://localhost:11434` |
+| `EVAL_MODELS` | Models the eval compares | `gemma4:e4b,gemma4:e2b` |
 
 Tested so far: Python 3.12 and Streamlit 1.66 in a test environment, with a fake model. Not yet tested with a real model.
 
@@ -71,14 +75,21 @@ Tested so far: Python 3.12 and Streamlit 1.66 in a test environment, with a fake
 | `eval/` | Eval questions and runner |
 
 ## Sources and credits
-- Source excerpts will be copied word for word from Wikipedia pages and stay under **CC BY-SA 4.0**. Each entry in `data/people.json` records the page title, URL, licence and the date copied.
+- Source excerpts are copied from Wikipedia pages and stay under **CC BY-SA 4.0** ([licence text](https://creativecommons.org/licenses/by-sa/4.0/)). The authors of each page are listed in its Wikipedia page history. Each entry in `data/people.json` records the page title, URL, licence, the date copied and the page's last-edited time.
+- Excerpts were copied from page text pasted by a team member on 2026-10-29. Citation markers like [1] were removed. Passages from different parts of a page are separated by a blank line.
 - The code in this repo is **MIT** licensed. The excerpts keep their own CC BY-SA 4.0 licence.
 - Gemma 4: see the model page links above.
 
-| Person | Genre | Source | State |
-|---|---|---|---|
-| Radia Perlman | Tech | Wikipedia | Not added yet |
-| Gladys West | Tech | Wikipedia | Not added yet |
+| Person | Genre | Living | Source page | Page last edited (UTC) |
+|---|---|---|---|---|
+| Radia Perlman | Tech | Yes | [Wikipedia](https://en.wikipedia.org/wiki/Radia_Perlman) | 2026-09-18 13:52 |
+| Gladys West | Tech | No | [Wikipedia](https://en.wikipedia.org/wiki/Gladys_West) | 2026-10-10 18:57 |
+| E. K. Janaki Ammal | Agri | No | [Wikipedia](https://en.wikipedia.org/wiki/Janaki_Ammal) | 2026-10-06 13:47 |
+| Florence Wambugu | Agri | Yes | [Wikipedia](https://en.wikipedia.org/wiki/Florence_Wambugu) | 2026-09-14 08:41 |
+| Savitribai Phule | Education | No | [Wikipedia](https://en.wikipedia.org/wiki/Savitribai_Phule) | 2026-10-15 17:23 |
+| James Emman Kwegyir Aggrey | Education | No | [Wikipedia](https://en.wikipedia.org/wiki/James_Emman_Kwegyir_Aggrey) | 2026-10-23 22:37 |
+
+The `years` and `why_unsung` fields in the data file are team notes, not Wikipedia text.
 
 ## AI disclosure
 Narration is AI-generated. People and sources were chosen by humans.
