@@ -27,12 +27,20 @@ def normalise(text: str) -> str:
     return " ".join(text.split()).lower()
 
 
+_PASSAGE_BREAK = re.compile(r"\n\s*\n")
+
+
 def quote_in_excerpt(quote: str, excerpt: str) -> bool:
-    """True if quote appears word for word in excerpt (spaces and case ignored)."""
+    """True if quote appears word for word in excerpt (spaces and case ignored).
+
+    The excerpt may join passages from different parts of a page with a blank
+    line. A quote must sit inside ONE passage, so it cannot glue the end of one
+    passage to the start of the next.
+    """
     q = normalise(quote)
     if len(q.split()) < MIN_QUOTE_WORDS:
         return False
-    return q in normalise(excerpt)
+    return any(q in normalise(passage) for passage in _PASSAGE_BREAK.split(excerpt))
 
 
 def parse_model_json(raw: str) -> Optional[dict]:

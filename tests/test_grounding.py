@@ -17,8 +17,14 @@ def test_quote_found_ignoring_case_and_spacing():
     assert quote_in_excerpt("QUICK   brown fox", EXCERPT)
 
 
-def test_quote_across_line_break():
+def test_quote_across_single_line_break():
     assert quote_in_excerpt("lazy dog. it was", EXCERPT)
+
+
+def test_quote_cannot_join_two_passages():
+    two = "First passage ends here.\n\nSecond passage starts there."
+    assert quote_in_excerpt("passage ends here.", two)
+    assert not quote_in_excerpt("passage ends here. Second passage starts", two)
 
 
 def test_quote_not_in_excerpt():
