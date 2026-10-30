@@ -208,3 +208,51 @@ def test_janaki_note_has_no_secondary_sources_and_matches_excerpt():
     ex = excerpt_of("janaki-ammal").lower()
     for phrase in ("high yielding strain of the sugarcane", "silent valley forests was saved from a hydroelectric project"):
         assert phrase in ex
+
+
+# ---- Perlman page order and team notes (decisions of Fri Oct 30, 2026) -----------------
+def test_perlman_passages_follow_live_page_order():
+    passages = excerpt_of("radia-perlman").split("\n\n")
+    assert len(passages) == 3
+    assert passages[0].startswith("She is a major figure")
+    assert passages[1].startswith("Perlman was elected a member")
+    assert passages[2].startswith("Perlman invented the spanning tree")
+
+
+# For each person: phrases from the excerpt that every claim in the Team note rests on.
+NOTE_SUPPORT = {
+    "radia-perlman": ["invention of the Spanning Tree Protocol", "fundamental to the operation of network bridges",
+                      "holds over 100 issued patents"],
+    "gladys-west": ["lack of recognition she received", "white coworkers received praise and added privileges",
+                    "classified as secret"],
+    "janaki-ammal": ["high yielding strain of the sugarcane", "Silent Valley Forests was saved from a hydroelectric project",
+                     "Indian botanist"],
+    "florence-wambugu": ["Kenyan plant pathologist", "genetically modified virus-resistant sweet potato",
+                         "banana tissue culture", "helped banana farmers in Kenya", "criticized"],
+    "savitribai-phule": ["viewed through the lens of her association with Jyotirao Phule", "independent perspective",
+                         "opened 18 schools"],
+    "james-aggrey": ["first Vice Principal of Achimota College", "Aggrey House at Kagumo High School",
+                     "Aggrey House at Alliance High School"],
+}
+BANNED_IN_NOTES = ["few people", "little known", "little credit", "forgotten", "ignored", "unsung", "overshadowed",
+                   "BBC", "News Minute", "across Africa", "debated"]
+
+
+def test_every_person_has_note_support_listed():
+    assert set(NOTE_SUPPORT) == set(PEOPLE)
+
+
+@pytest.mark.parametrize("pid", sorted(PEOPLE))
+def test_team_note_only_says_what_the_excerpt_supports(pid):
+    note = PEOPLE[pid]["why_unsung"]
+    assert note.startswith("Team note:")
+    for banned in BANNED_IN_NOTES:
+        assert banned.lower() not in note.lower(), (pid, banned)
+    ex = excerpt_of(pid).lower()
+    for phrase in NOTE_SUPPORT[pid]:
+        assert phrase.lower() in ex, (pid, phrase)
+
+
+def test_wambugu_note_does_not_mention_the_failed_project():
+    note = PEOPLE["florence-wambugu"]["why_unsung"].lower()
+    assert "fail" not in note and "new scientist" not in note and "2004" not in note

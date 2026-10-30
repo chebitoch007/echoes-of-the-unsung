@@ -23,7 +23,7 @@ def texts(at):
 def test_team_note_is_labelled_and_prefix_not_doubled(monkeypatch):
     at = run(monkeypatch, 0, "{}")
     t = texts(at)
-    assert "**Team note:** her protocols run quietly" in t
+    assert "**Team note:** she invented the Spanning Tree Protocol" in t
     assert "Team note: Team note" not in t and "Team note:** Team note" not in t
 
 
