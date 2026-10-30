@@ -15,7 +15,7 @@ Submission deadline: Sun Nov 1, 2026, 09:59 EAT.
 | Safety check (`grounding.py`) | Written and unit-tested. |
 | People and source texts | 6 people added (2 Tech, 2 Agri, 2 Education). Excerpts copied from Wikipedia on 2026-10-29. |
 | Screen details | Shows the "Team note" for each person (labelled, not part of the source) and "Wikipedia contributors, CC BY-SA 4.0" with every citation |
-| Tests | 131 pass with a fake model, including a grounding test for each of the 6 people and a check that every excerpt fits a 4096-token context |
+| Tests | 136 pass with a fake model, including a grounding test for each of the 6 people and a check that every excerpt fits a 4096-token context |
 | Eval | 10 questions and a runner. Each model reply is judged with the grounding check ON and OFF. The Wambugu "which project failed" question (q07) is reported in its own row, outside the totals, because the code guard can pass it. One real run is in `eval/results.md` (see Eval results). |
 
 ## Open-source AI used
@@ -86,7 +86,7 @@ Run by the team on Fri Oct 30, 2026, 09:59 EAT. Laptop with 8 GB RAM (Windows), 
 
 ## Speed (as measured)
 - Eval script: an average of 32.8 s per question over the 9 counted questions (q07's time is not in this average).
-- App, same laptop: a team member saw replies of about 2 min 20 s. That figure was not recorded by the app or the eval script.
+- App, same laptop: a team member saw two replies on Fri Oct 30, 2026, between 09:29 and 09:41 EAT: about 2 min 25 s and about 2 min 19 s. These figures were not recorded by the app or the eval script.
 - The two numbers have not been reconciled and the cause has not been investigated. This README makes no other speed claim.
 
 ## Known limits

@@ -45,7 +45,8 @@ def test_readme_never_claims_fine_tuning():
 
 
 def test_readme_states_both_speed_figures_as_measured():
-    assert "32.8 s per question" in README and "about 2 min 20 s" in README
+    assert "32.8 s per question" in README
+    assert "about 2 min 25 s" in README and "about 2 min 19 s" in README
     assert "not recorded by the app or the eval script" in README
 
 
