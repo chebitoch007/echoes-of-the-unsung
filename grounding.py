@@ -100,8 +100,10 @@ def check_answer(raw_model_output: str, excerpt: str, guards: Optional[list] = N
         return GroundingResult(False, reason="wrong_fields")
     answer, quote = answer.strip(), quote.strip()
 
-    if not answer or not quote:
-        return GroundingResult(False, reason="model_cannot_answer")
+    if not answer:
+        return GroundingResult(False, reason="empty_answer")
+    if not quote:
+        return GroundingResult(False, reason="empty_quote")
     if not quote_in_excerpt(quote, excerpt):
         return GroundingResult(False, reason="quote_not_in_excerpt")
 

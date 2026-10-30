@@ -209,6 +209,6 @@ def narration_from_raw(raw: str, person: dict, grounded: bool = True) -> Narrati
         return Narration("bad_json", citation=citation, reason="bad_json")
     answer = data.get("answer")
     if not isinstance(answer, str) or not answer.strip():
-        return Narration("not_in_sources", text=NOT_IN_SOURCES, citation=citation, reason="model_cannot_answer")
+        return Narration("not_in_sources", text=NOT_IN_SOURCES, citation=citation, reason="empty_answer")
     quote = data.get("supporting_quote")
     return Narration("ok", text=answer.strip(), quote=quote.strip() if isinstance(quote, str) else "", citation=citation)

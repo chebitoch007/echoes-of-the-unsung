@@ -45,9 +45,13 @@ def test_quote_not_in_excerpt_rejected():
     assert not r.ok and r.reason == "quote_not_in_excerpt"
 
 
-def test_model_cannot_answer_rejected():
-    r = check_answer(raw("", ""), EXCERPT)
-    assert not r.ok and r.reason == "model_cannot_answer"
+def test_empty_answer_and_empty_quote_have_different_reasons():
+    assert check_answer(raw("", ""), EXCERPT).reason == "empty_answer"          # nothing at all
+    assert check_answer(raw("", "brown fox jumps"), EXCERPT).reason == "empty_answer"
+    assert check_answer(raw("She did it.", ""), EXCERPT).reason == "empty_quote"
+    assert check_answer(raw("She did it.", "   "), EXCERPT).reason == "empty_quote"
+    for r in (check_answer(raw("", ""), EXCERPT), check_answer(raw("x", ""), EXCERPT)):
+        assert not r.ok
 
 
 def test_bad_json_does_not_crash():

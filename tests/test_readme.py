@@ -57,3 +57,7 @@ def test_readme_keeps_required_submission_sections():
 def test_readme_says_phule_is_in_live_page_order():
     assert "has not been changed yet" not in README
     assert "Savitribai Phule's seven passages are in the same order as on the live pages" in README
+
+
+def test_readme_names_both_reason_labels():
+    assert "`empty_answer`" in README and "`empty_quote`" in README

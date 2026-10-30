@@ -71,7 +71,9 @@ def describe(question: dict, person: dict, raw) -> str:
                          f"{quote_in_excerpt(quote, excerpt)}")
         elif isinstance(quote, str):
             lines.append("supporting_quote is EMPTY. With grounding ON an empty quote is refused "
-                         "(reason model_cannot_answer); with grounding OFF only the answer is checked.")
+                         "(reason empty_quote); with grounding OFF only the answer is checked.")
+        if not isinstance(answer, str) or not answer.strip():
+            lines.append("answer is EMPTY or missing. Both modes refuse it (reason empty_answer).")
     lines += guard_detail(answer if isinstance(answer, str) else "", person.get("guards"))
     for label, grounded in (("ON ", True), ("OFF", False)):
         n = narration_from_raw(raw, person, grounded=grounded) if raw is not None else None

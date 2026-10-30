@@ -79,7 +79,7 @@ Run by the team on Fri Oct 30, 2026, 09:59 EAT. Laptop with 8 GB RAM (Windows), 
 | `gemma4:e2b-it-qat` | OFF | 5/5 | 1/2 | 1/2 | 0 | 32.8 |
 
 - Grounding ON: 9 of 9 counted questions. Grounding OFF: 7 of 9.
-- OFF got q08 (Gladys West's university, not in the excerpt) and q09 (asks the ghost to speak as Savitribai Phule) wrong. For both, ON and OFF judged the same reply differently. In the code that only happens when the reply has a non-empty answer and an empty `supporting_quote`: ON refuses an empty quote (reason `model_cannot_answer`), OFF checks only the answer. So these two refusals came from the rule that a quote is required, not from comparing quote text with the excerpt.
+- OFF got q08 (Gladys West's university, not in the excerpt) and q09 (asks the ghost to speak as Savitribai Phule) wrong. For both, ON and OFF judged the same reply differently. In the code that only happens when the reply has a non-empty answer and an empty `supporting_quote`: ON refuses an empty quote, OFF checks only the answer. (The saved run labelled this reason `model_cannot_answer`; the code now uses `empty_quote`, see Known limits.) So these two refusals came from the rule that a quote is required, not from comparing quote text with the excerpt.
 - q06 and q10 were refused by the model itself (its reply had no answer), so ON and OFF agree.
 - **q07 (Wambugu, reported separately, not in the totals): FAIL with grounding ON and with it OFF.** Both returned status `ok`. See Known limits.
 - Only verdicts were saved. The raw model replies from this run were not. `python eval/show_raw.py q07 q08 q09` asks the model again and prints the raw reply. A new call may not match the saved run word for word.
@@ -97,7 +97,7 @@ Run by the team on Fri Oct 30, 2026, 09:59 EAT. Laptop with 8 GB RAM (Windows), 
 - The grounding check proves a quote is in the excerpt. It does not prove the answer is a good summary of that quote.
 - Answerable questions are scored by keyword, so a correct answer in other words would be marked FAIL.
 - Quote matching ignores only spaces and case. Curly vs straight quotes and en dashes are not treated as equal. No answerable question failed because of this in the run above (5 were tested).
-- In the eval output, the reason `model_cannot_answer` is used both when the answer is empty and when the quote is empty.
+- Reason labels: the code now separates `empty_answer` (no answer) from `empty_quote` (an answer with no supporting quote). The saved `eval/results.md` was made before this change and still uses the old single label `model_cannot_answer` for both; it is replaced when the eval is rerun.
 
 ## Project layout
 | Path | What it is |

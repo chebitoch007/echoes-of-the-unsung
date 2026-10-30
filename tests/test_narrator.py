@@ -251,3 +251,14 @@ def test_answer_question_default_budget_matches_4096():
 
 def test_prompt_asks_for_short_answers_to_fit_the_output_cap():
     assert "one or two short" in SYSTEM_PROMPT and "3 to 25 words" in SYSTEM_PROMPT
+
+
+def test_on_and_off_reasons_for_empty_answer_and_empty_quote():
+    empty_answer = reply("", "")
+    on, off = narration_from_raw(empty_answer, PERSON, True), narration_from_raw(empty_answer, PERSON, False)
+    assert (on.status, on.reason) == ("not_in_sources", "empty_answer")
+    assert (off.status, off.reason) == ("not_in_sources", "empty_answer")
+    no_quote = reply("She did something.", "")
+    on, off = narration_from_raw(no_quote, PERSON, True), narration_from_raw(no_quote, PERSON, False)
+    assert (on.status, on.reason) == ("not_in_sources", "empty_quote")
+    assert off.status == "ok"

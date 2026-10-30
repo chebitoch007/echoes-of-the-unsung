@@ -27,10 +27,10 @@ def reply(answer, quote):
 
 
 def test_answer_with_empty_quote_is_refused_on_but_ok_off():
-    # Same shape as eval q08 and q09: ON says model_cannot_answer, OFF says ok.
+    # Same shape as eval q08 and q09: ON refuses the empty quote, OFF says ok.
     text = show_raw.describe(Q["q08"], PEOPLE["gladys-west"], reply("She went to a university.", ""))
     assert "supporting_quote is EMPTY" in text
-    assert "Grounding ON : status=not_in_sources reason=model_cannot_answer" in text
+    assert "Grounding ON : status=not_in_sources reason=empty_quote" in text
     assert "Grounding OFF: status=ok" in text
 
 
@@ -63,3 +63,10 @@ def test_unknown_id_is_reported_not_raised():
 def test_bad_json_does_not_crash():
     out = show_raw.describe(Q["q01"], PEOPLE["radia-perlman"], "not json at all")
     assert "Parsed JSON: none (bad_json)" in out and "status=bad_json" in out
+
+
+def test_empty_answer_is_explained_and_uses_its_own_reason():
+    text = show_raw.describe(Q["q06"], PEOPLE["radia-perlman"], reply("", ""))
+    assert "answer is EMPTY or missing" in text
+    assert "Grounding ON : status=not_in_sources reason=empty_answer" in text
+    assert "Grounding OFF: status=not_in_sources reason=empty_answer" in text
