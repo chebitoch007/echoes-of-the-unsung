@@ -150,3 +150,61 @@ def test_every_source_has_the_required_metadata():
         assert need <= set(p["sources"][0]), p["id"]
         assert p["sources"][0]["licence"] == "CC BY-SA 4.0"
         assert p["why_unsung"].startswith("Team note:")
+
+
+# ---- live-text fixes (decision of Thu Oct 29, 2026) --------------------------------
+def excerpt_of(pid):
+    return PEOPLE[pid]["sources"][0]["excerpt"]
+
+
+def test_perlman_has_full_nickname_clause_and_patents_sentence():
+    ex = excerpt_of("radia-perlman")
+    assert ('while working for Digital Equipment Corporation, thus earning her nickname '
+            '"Mother of the Internet", a title that she did not like. Her innovations') in ex
+    assert ("contributions to Internet routing and bridging protocols. She holds over 100 issued patents. "
+            "She was elected to the Internet Hall of Fame in 2014") in ex
+
+
+def test_phule_sentences_are_live_text_and_not_merged():
+    ex = excerpt_of("savitribai-phule")
+    assert "In 1848, they established their first school for girls at the residence of Tatyasaheb Bhide, known as Bhide Wada in Pune. By 1851" in ex
+    assert ("In 1848, together with Jyotirao and Sagunabai Kshirsagar, she opened the nation's first girls' school at "
+            "Bhidewada in Pune on a progressive syllabus") in ex
+    assert "she established the first school for girls" not in ex   # the old merged sentence
+    assert "stones, dung, and verbal abuse" in ex and "cow dung" not in ex
+    # the two 1848 sentences sit in different passages, never in one
+    assert not any("they established their first school" in p and "opened the nation's first girls' school" in p
+                   for p in ex.split("\n\n"))
+
+
+def test_phule_quote_spanning_the_two_1848_passages_is_refused():
+    person = PEOPLE["savitribai-phule"]
+    glued = "opened 18 schools. In 1848, together with Jyotirao"
+    n = answer_question(FakeModel("x", "the couple opened 18 schools. In 1848, together with Jyotirao"), person, "Q?")
+    assert n.status == "not_in_sources"
+
+
+def test_replaced_sources_record_time_in_eat():
+    for pid in ("radia-perlman", "savitribai-phule"):
+        s = PEOPLE[pid]["sources"][0]
+        assert s["retrieved"].startswith("2026-10-29 ") and s["retrieved"].endswith(" EAT")
+
+
+# ---- context window 4096 -----------------------------------------------------------
+@pytest.mark.parametrize("pid", sorted(PEOPLE))
+def test_every_excerpt_fits_in_num_ctx_4096(pid):
+    from narrator import OUTPUT_TOKEN_RESERVE, SYSTEM_PROMPT, estimate_tokens
+    person = PEOPLE[pid]
+    used = estimate_tokens(SYSTEM_PROMPT) + estimate_tokens(build_user_prompt(person, excerpt_of(pid), "x" * 200))
+    assert used <= 4096 - OUTPUT_TOKEN_RESERVE, (pid, used)
+    n = answer_question(FakeModel("a", "b"), person, "x" * 200, num_ctx=4096)
+    assert n.status != "too_long"
+
+
+# ---- team notes ---------------------------------------------------------------------
+def test_janaki_note_has_no_secondary_sources_and_matches_excerpt():
+    note = PEOPLE["janaki-ammal"]["why_unsung"]
+    assert "BBC" not in note and "News Minute" not in note and "Newsminute" not in note
+    ex = excerpt_of("janaki-ammal").lower()
+    for phrase in ("high yielding strain of the sugarcane", "silent valley forests was saved from a hydroelectric project"):
+        assert phrase in ex
