@@ -12,7 +12,7 @@ from typing import Optional, Protocol
 
 import requests
 
-from grounding import NOT_IN_SOURCES, check_answer
+from grounding import NOT_IN_SOURCES, check_answer, parse_model_json
 
 # Official tag from the Gemma 4 docs. Override with the OLLAMA_MODEL env var,
 # for example gemma4:e2b on a smaller laptop. Check what you have: `ollama list`.
@@ -182,8 +182,30 @@ def answer_question(client: ModelClient, person: dict, question: str,
     except NarratorError as e:
         return Narration("error", text=str(e), citation=citation, reason=type(e).__name__)
 
-    result = check_answer(raw, excerpt, person.get("guards"))
-    if not result.ok:
-        return Narration("not_in_sources", text=NOT_IN_SOURCES, citation=citation,
-                         reason=result.reason)
-    return Narration("ok", text=result.answer, quote=result.quote, citation=citation)
+    return narration_from_raw(raw, person, grounded=True)
+
+
+def narration_from_raw(raw: str, person: dict, grounded: bool = True) -> Narration:
+    """Turn the model's raw text into a Narration.
+
+    grounded=True is what the app does: quote check plus guards.
+    grounded=False accepts any non-empty answer from valid JSON, with no checks.
+    The eval uses False only to measure what the grounding check adds.
+    """
+    source = (person.get("sources") or [{}])[0]
+    citation = {k: source.get(k, "") for k in ("title", "url", "licence", "licence_url", "author")}
+    excerpt = source.get("excerpt", "")
+    if grounded:
+        result = check_answer(raw, excerpt, person.get("guards"))
+        if not result.ok:
+            return Narration("not_in_sources", text=NOT_IN_SOURCES, citation=citation, reason=result.reason)
+        return Narration("ok", text=result.answer, quote=result.quote, citation=citation)
+
+    data = parse_model_json(raw)
+    if data is None:
+        return Narration("bad_json", citation=citation, reason="bad_json")
+    answer = data.get("answer")
+    if not isinstance(answer, str) or not answer.strip():
+        return Narration("not_in_sources", text=NOT_IN_SOURCES, citation=citation, reason="model_cannot_answer")
+    quote = data.get("supporting_quote")
+    return Narration("ok", text=answer.strip(), quote=quote.strip() if isinstance(quote, str) else "", citation=citation)

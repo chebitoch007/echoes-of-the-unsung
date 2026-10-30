@@ -8,7 +8,8 @@ import requests
 import narrator
 from grounding import NOT_IN_SOURCES
 from narrator import (ModelNotFound, NarratorError, OllamaClient, OllamaUnavailable,
-                      answer_question, estimate_tokens, build_user_prompt, SYSTEM_PROMPT)
+                      answer_question, estimate_tokens, build_user_prompt, SYSTEM_PROMPT,
+                      narration_from_raw)
 
 PERSON = {
     "name": "Test Person",
@@ -198,3 +199,21 @@ def test_timeout_from_env(monkeypatch):
     assert OllamaClient(model="m").timeout == 42.0
     monkeypatch.delenv("OLLAMA_TIMEOUT")
     assert OllamaClient(model="m").timeout == narrator.DEFAULT_TIMEOUT
+
+
+# ---- grounding ON vs OFF (used by the eval) --------------------------------------
+def test_grounding_off_accepts_an_invented_quote_that_grounding_on_refuses():
+    raw = reply("She loved tea.", "she loved tea a lot")
+    assert narration_from_raw(raw, PERSON, grounded=True).status == "not_in_sources"
+    off = narration_from_raw(raw, PERSON, grounded=False)
+    assert off.status == "ok" and off.text == "She loved tea."
+
+
+def test_grounding_off_still_reports_bad_json_and_empty_answers():
+    assert narration_from_raw("not json", PERSON, grounded=False).status == "bad_json"
+    assert narration_from_raw(reply("", ""), PERSON, grounded=False).status == "not_in_sources"
+
+
+def test_grounding_on_via_narration_from_raw_matches_answer_question():
+    raw = reply("She built the first widget.", "built the first widget in 1970")
+    assert narration_from_raw(raw, PERSON).status == "ok"
