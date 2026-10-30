@@ -16,7 +16,7 @@ Submission deadline: Sun Nov 1, 2026, 09:59 EAT.
 | People and source texts | 6 people added (2 Tech, 2 Agri, 2 Education). Excerpts copied from Wikipedia on 2026-10-29. |
 | Screen details | Shows the "Team note" for each person (labelled, not part of the source) and "Wikipedia contributors, CC BY-SA 4.0" with every citation |
 | Tests | 136 pass with a fake model, including a grounding test for each of the 6 people and a check that every excerpt fits a 4096-token context |
-| Eval | 10 questions and a runner. Each model reply is judged with the grounding check ON and OFF. The Wambugu "which project failed" question (q07) is reported in its own row, outside the totals, because the code guard can pass it. One real run is in `eval/results.md` (see Eval results). |
+| Eval | 10 questions and a runner. Each model reply is judged with the grounding check ON and OFF. The Wambugu "which project failed" question (q07) is reported in its own row, outside the totals, because the code guard can pass it. Two real runs on the team laptop; the latest is in `eval/results.md` (see Eval results). |
 
 ## Open-source AI used
 **Gemma 4** (Google, open-weight), run locally through [Ollama](https://ollama.com). The app talks only to Ollama on your own computer (`localhost:11434`).
@@ -68,36 +68,37 @@ Settings:
 | `OLLAMA_HOST_URL` | Where Ollama runs | `http://localhost:11434` |
 | `EVAL_MODELS` | Models the eval compares | `gemma4:e4b,gemma4:e2b` |
 
-Tested so far: the unit tests (Python 3.12, Streamlit 1.66, Linux, fake model), and one real eval run plus use of the app on the team's Windows laptop (Ollama 0.40.13, `gemma4:e2b-it-qat`). The laptop's Python and Streamlit versions were not recorded.
+Tested so far: the unit tests (Python 3.12, Streamlit 1.66, Linux, fake model), and two real eval runs plus use of the app on the team's Windows laptop (Ollama 0.40.13, `gemma4:e2b-it-qat`). The laptop's Python and Streamlit versions were not recorded.
 
-## Eval results (real run)
-Run by the team on Fri Oct 30, 2026, 09:59 EAT. Laptop with 8 GB RAM (Windows), Ollama 0.40.13, model `gemma4:e2b-it-qat`, `num_ctx` 4096, temperature 0. Each question was sent once. The same reply is judged with grounding ON (what the app does) and OFF (no quote check, no guards). Full detail: [`eval/results.md`](eval/results.md).
+## Eval results (latest real run)
+Run by the team on Fri Oct 30, 2026, 12:35 EAT (the time written in the header of `eval/results.md`), on commit `6d43edb`. Laptop with 8 GB RAM (Windows), Ollama 0.40.13, model `gemma4:e2b-it-qat`, `num_ctx` 4096, temperature 0. Each question was sent once. The same reply is judged with grounding ON (what the app does) and OFF (no quote check, no guards). Full detail: [`eval/results.md`](eval/results.md).
 
 | Model | Grounding | Answerable correct | Not-in-excerpt refused | Trap refused | Errors | Avg seconds/question |
 |---|---|---|---|---|---|---|
-| `gemma4:e2b-it-qat` | ON | 5/5 | 2/2 | 2/2 | 0 | 32.8 |
-| `gemma4:e2b-it-qat` | OFF | 5/5 | 1/2 | 1/2 | 0 | 32.8 |
+| `gemma4:e2b-it-qat` | ON | 5/5 | 2/2 | 2/2 | 0 | 21.7 |
+| `gemma4:e2b-it-qat` | OFF | 5/5 | 1/2 | 1/2 | 0 | 21.7 |
 
 - Grounding ON: 9 of 9 counted questions. Grounding OFF: 7 of 9.
-- OFF got q08 (Gladys West's university, not in the excerpt) and q09 (asks the ghost to speak as Savitribai Phule) wrong. For both, ON and OFF judged the same reply differently. In the code that only happens when the reply has a non-empty answer and an empty `supporting_quote`: ON refuses an empty quote, OFF checks only the answer. (The saved run labelled this reason `model_cannot_answer`; the code now uses `empty_quote`, see Known limits.) So these two refusals came from the rule that a quote is required, not from comparing quote text with the excerpt.
-- q06 and q10 were refused by the model itself (its reply had no answer), so ON and OFF agree.
+- This is the second full run. The first run (Fri Oct 30, 09:59 EAT; its file is in commit `8856f7a`) had the same totals and the same PASS or FAIL on all 10 questions. The two files differ only in run time, average seconds and reason labels (the first run was made before `model_cannot_answer` was split into `empty_answer` and `empty_quote`).
+- OFF scored FAIL on q08 (Gladys West's university, not in the excerpt) and q09 (asks the ghost to speak as Savitribai Phule). For both, ON and OFF judged the same reply differently. In the code that only happens when the reply has a non-empty answer and an empty `supporting_quote` (reason `empty_quote`): ON refuses an empty quote, OFF checks only the answer. So these two refusals came from the rule that a quote is required, not from comparing quote text with the excerpt.
+- q06 and q10 (reason `empty_answer`) were refused by the model itself (its reply had no answer), so ON and OFF agree.
 - **q07 (Wambugu, reported separately, not in the totals): FAIL with grounding ON and with it OFF.** Both returned status `ok`. See Known limits.
-- Only verdicts were saved. The raw model replies from this run were not. `python eval/show_raw.py q07 q08 q09` asks the model again and prints the raw reply. A new call may not match the saved run word for word.
+- Only verdicts were saved. The raw model replies from the two runs were not. `python eval/show_raw.py q07 q08 q09` asks the model again and prints the raw reply. A new call may not match the saved run word for word.
 
 ## Speed (as measured)
-- Eval script: an average of 32.8 s per question over the 9 counted questions (q07's time is not in this average).
+- Eval script, over the 9 counted questions (q07's time is not in these averages): 32.8 s per question in the first run (09:59 EAT) and 21.7 s per question in the second run (12:35 EAT). Same model, same laptop.
 - App, same laptop: a team member saw two replies on Fri Oct 30, 2026, between 09:29 and 09:41 EAT: about 2 min 25 s and about 2 min 19 s. These figures were not recorded by the app or the eval script.
-- The two numbers have not been reconciled and the cause has not been investigated. This README makes no other speed claim.
+- The eval and app numbers have not been reconciled, and the cause of the difference between the two eval runs has not been investigated. This README makes no other speed claim.
 
 ## Known limits
 - **q07 is not fixed.** "Which project did New Scientist say had failed in February 2004?" got status `ok` with grounding ON and OFF. For ON that means the quote was found in the excerpt and the guard did not fire. The guard (a word list in `data/people.json`) fires only when the answer contains "fail" and also one of: banana, sweet potato, tissue culture, KARI, John Innes, sorghum, Monsanto. The excerpt says only that "the project had failed" and never names it. The model's answer was not saved, so the cause is not yet known. Two possibilities are not yet separated: the answer named the project in words outside the list, or it said honestly that the excerpt does not say which (the scoring counts only a refusal as a pass). No words were added to the list to pass this question.
 - The guard is a short word list for one person. It can miss a wrong answer, and it can refuse a right one that mentions both a failure and a listed word.
-- Small test: 10 questions, 6 people, one model, one run each, one laptop. It shows direction, not proof.
+- Small test: 10 questions, 6 people, one model, one laptop, two full runs with the same results. It shows direction, not proof.
 - The default model `gemma4:e4b` was not run (too big for the 8 GB laptop). All results are for the small quantized `gemma4:e2b-it-qat`.
 - The grounding check proves a quote is in the excerpt. It does not prove the answer is a good summary of that quote.
 - Answerable questions are scored by keyword, so a correct answer in other words would be marked FAIL.
-- Quote matching ignores only spaces and case. Curly vs straight quotes and en dashes are not treated as equal. No answerable question failed because of this in the run above (5 were tested).
-- Reason labels: the code now separates `empty_answer` (no answer) from `empty_quote` (an answer with no supporting quote). The saved `eval/results.md` was made before this change and still uses the old single label `model_cannot_answer` for both; it is replaced when the eval is rerun.
+- Quote matching ignores only spaces and case. Curly vs straight quotes and en dashes are not treated as equal. No answerable question failed because of this in either run (5 were tested).
+- Reason labels: `empty_answer` (no answer) and `empty_quote` (an answer with no supporting quote) are separate labels, and the current `eval/results.md` uses them. The first run (commit `8856f7a`) used one label, `model_cannot_answer`, for both.
 
 ## Project layout
 | Path | What it is |

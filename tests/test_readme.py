@@ -45,7 +45,7 @@ def test_readme_never_claims_fine_tuning():
 
 
 def test_readme_states_both_speed_figures_as_measured():
-    assert "32.8 s per question" in README
+    assert "32.8 s per question" in README and "21.7 s per question" in README
     assert "about 2 min 25 s" in README and "about 2 min 19 s" in README
     assert "not recorded by the app or the eval script" in README
 
@@ -62,3 +62,13 @@ def test_readme_says_phule_is_in_live_page_order():
 
 def test_readme_names_both_reason_labels():
     assert "`empty_answer`" in README and "`empty_quote`" in README
+
+
+def test_readme_names_the_commit_and_time_of_the_latest_run():
+    assert "12:35 EAT" in README and "on commit `6d43edb`" in README
+    assert "09:59 EAT" in README and "8856f7a" in README  # the first run is still described as the first run
+
+
+def test_readme_has_no_stale_note_about_the_old_label_in_results_md():
+    assert "was made before this change" not in README
+    assert "replaced when the eval is rerun" not in README
