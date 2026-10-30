@@ -15,7 +15,7 @@ Submission deadline: Sun Nov 1, 2026, 09:59 EAT.
 | Safety check (`grounding.py`) | Written and unit-tested. |
 | People and source texts | 6 people added (2 Tech, 2 Agri, 2 Education). Excerpts copied from Wikipedia on 2026-10-29. |
 | Screen details | Shows the "Team note" for each person (labelled, not part of the source) and "Wikipedia contributors, CC BY-SA 4.0" with every citation |
-| Tests | 102 pass with a fake model, including a grounding test for each of the 6 people and a check that every excerpt fits a 4096-token context |
+| Tests | 119 pass with a fake model, including a grounding test for each of the 6 people and a check that every excerpt fits a 4096-token context |
 | Eval | 10 questions and a runner are written. Each model reply is judged with the grounding check ON and OFF. The Wambugu "which project failed" question is reported in its own row, outside the totals, because the code guard can pass it. No real run yet, so there is no `eval/results.md`. |
 
 ## Open-source AI used
@@ -61,7 +61,8 @@ Settings:
 | Variable | Meaning | Default |
 |---|---|---|
 | `OLLAMA_MODEL` | Model tag | `gemma4:e4b` |
-| `OLLAMA_NUM_CTX` | Context window sent to Ollama | `8192` |
+| `OLLAMA_NUM_CTX` | Context window sent to Ollama | `4096` |
+| (fixed in `narrator.py`) | Longest reply the model may write | `150` tokens |
 | `OLLAMA_TIMEOUT` | Seconds to wait for a reply (first reply is slower while the model loads) | `300` |
 | `OLLAMA_HOST_URL` | Where Ollama runs | `http://localhost:11434` |
 | `EVAL_MODELS` | Models the eval compares | `gemma4:e4b,gemma4:e2b` |
@@ -82,8 +83,9 @@ Tested so far: Python 3.12 and Streamlit 1.66 in a test environment, with a fake
 - Source excerpts are copied from Wikipedia pages and stay under **CC BY-SA 4.0** ([licence text](https://creativecommons.org/licenses/by-sa/4.0/)). The code in this repo is **MIT** licensed. The excerpts keep their own CC BY-SA 4.0 licence.
 - Every citation in the app shows "Wikipedia contributors, CC BY-SA 4.0", the page title, the URL and the supporting quote. The authors of each page are listed in its Wikipedia page history.
 - Each entry in `data/people.json` records the page title, URL, licence, the date copied and the page's last-edited time.
-- Excerpts were first copied from page text pasted by a team member on 2026-10-29. Four passages (two for Radia Perlman, two for Savitribai Phule) were then re-copied from the live pages on 2026-10-29 at 23:54 EAT (time from the build computer's clock), because the first copy differed from the live text. The other four excerpts matched the live pages when checked. Citation markers like [1] were removed. Passages from different parts of a page are separated by a blank line.
-- The "Team note" lines (`why_unsung`) and the `years` field are written by the team. They are not Wikipedia text, and the app labels them.
+- Excerpts were first copied from page text pasted by a team member on 2026-10-29. Four passages (two for Radia Perlman, two for Savitribai Phule) were then re-copied from the live pages on 2026-10-29 at 23:54 EAT (Nairobi time, from the build computer's clock, which was checked against real time on Fri Oct 30, 2026), because the first copy differed from the live text. The other four excerpts matched the live pages when checked. Citation markers like [1] were removed. Passages from different parts of a page are separated by a blank line.
+- The "Team note" lines (`why_unsung`) and the `years` field are written by the team. They are not Wikipedia text, and the app labels them. A Team note may only say what that person's excerpt supports, and a test checks this.
+- Radia Perlman's three passages are in the same order as on the live page.
 - Gemma 4: see the model page links above.
 
 | Person | Genre | Living | Source page | Page last edited (UTC) |
