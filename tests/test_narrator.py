@@ -217,3 +217,37 @@ def test_grounding_off_still_reports_bad_json_and_empty_answers():
 def test_grounding_on_via_narration_from_raw_matches_answer_question():
     raw = reply("She built the first widget.", "built the first widget in 1970")
     assert narration_from_raw(raw, PERSON).status == "ok"
+
+
+# ---- default context and output limits (decision of Fri Oct 30, 2026) ---------------
+def test_default_context_is_4096_and_output_is_capped_at_150(monkeypatch):
+    monkeypatch.delenv("OLLAMA_NUM_CTX", raising=False)
+    assert narrator.DEFAULT_NUM_CTX == 4096
+    assert narrator.MAX_OUTPUT_TOKENS == 150
+    assert narrator.OUTPUT_TOKEN_RESERVE >= narrator.MAX_OUTPUT_TOKENS
+    client = OllamaClient(model="m")
+    assert client.num_ctx == 4096 and client.max_output_tokens == 150
+
+
+def test_request_to_ollama_uses_4096_and_150_by_default(monkeypatch):
+    monkeypatch.delenv("OLLAMA_NUM_CTX", raising=False)
+    sent = patch_post(monkeypatch, [FakeResponse(body={"message": {"content": "{}"}})])
+    OllamaClient(model="m").generate("s", "u")
+    options = sent[0][1]["options"]
+    assert options["num_ctx"] == 4096
+    assert options["num_predict"] == 150
+    assert options["temperature"] == 0
+
+
+def test_num_ctx_can_still_be_raised_with_env(monkeypatch):
+    monkeypatch.setenv("OLLAMA_NUM_CTX", "8192")
+    assert OllamaClient(model="m").num_ctx == 8192
+
+
+def test_answer_question_default_budget_matches_4096():
+    import inspect
+    assert inspect.signature(answer_question).parameters["num_ctx"].default == 4096
+
+
+def test_prompt_asks_for_short_answers_to_fit_the_output_cap():
+    assert "one or two short" in SYSTEM_PROMPT and "3 to 25 words" in SYSTEM_PROMPT

@@ -18,9 +18,10 @@ from grounding import NOT_IN_SOURCES, check_answer, parse_model_json
 # for example gemma4:e2b on a smaller laptop. Check what you have: `ollama list`.
 DEFAULT_MODEL = "gemma4:e4b"
 DEFAULT_HOST = "http://localhost:11434"
-DEFAULT_NUM_CTX = 8192      # set explicitly: Ollama's own default can be much smaller
+DEFAULT_NUM_CTX = 4096      # set explicitly: Ollama's own default can be much smaller
 DEFAULT_TIMEOUT = 300.0     # seconds. First reply can be slow while the model loads (8 GB laptops)
-OUTPUT_TOKEN_RESERVE = 1024  # room kept free for the model's reply
+MAX_OUTPUT_TOKENS = 150     # the reply is a short JSON object, so cap it
+OUTPUT_TOKEN_RESERVE = MAX_OUTPUT_TOKENS + 150  # room kept free for the reply, with margin
 CHARS_PER_TOKEN = 3          # cautious estimate (real text is usually ~4)
 
 
@@ -50,11 +51,13 @@ class ModelClient(Protocol):
 
 class OllamaClient:
     def __init__(self, model: Optional[str] = None, host: Optional[str] = None,
-                 num_ctx: Optional[int] = None, timeout: Optional[float] = None):
+                 num_ctx: Optional[int] = None, timeout: Optional[float] = None,
+                 max_output_tokens: int = MAX_OUTPUT_TOKENS):
         self.model = model or get_model_name()
         self.host = (host or os.environ.get("OLLAMA_HOST_URL", DEFAULT_HOST)).rstrip("/")
         self.num_ctx = num_ctx or int(os.environ.get("OLLAMA_NUM_CTX", DEFAULT_NUM_CTX))
         self.timeout = timeout or float(os.environ.get("OLLAMA_TIMEOUT", DEFAULT_TIMEOUT))
+        self.max_output_tokens = max_output_tokens
 
     def _post(self, payload: dict) -> requests.Response:
         try:
@@ -80,7 +83,7 @@ class OllamaClient:
             "stream": False,
             "format": "json",       # ask Ollama for JSON; we still validate it
             "think": False,         # ask for no reasoning text; see note below
-            "options": {"num_ctx": self.num_ctx, "temperature": 0},
+            "options": {"num_ctx": self.num_ctx, "num_predict": self.max_output_tokens, "temperature": 0},
         }
         resp = self._post(payload)
         if resp.status_code == 400 and "think" in resp.text.lower():
@@ -122,7 +125,7 @@ RULES
 7. If the excerpt does not contain the answer, return empty strings (see below).
 
 OUTPUT: reply with ONLY one JSON object, nothing else:
-{"answer": "<one to three plain sentences, third person>", "supporting_quote": "<an exact, unchanged copy of one passage of at least 3 words from the EXCERPT that supports your answer>"}
+{"answer": "<one or two short plain sentences, third person>", "supporting_quote": "<an exact, unchanged copy of 3 to 25 words from the EXCERPT that support your answer>"}
 
 If you cannot answer from the excerpt, reply exactly:
 {"answer": "", "supporting_quote": ""}
