@@ -72,3 +72,23 @@ def test_readme_names_the_commit_and_time_of_the_latest_run():
 def test_readme_has_no_stale_note_about_the_old_label_in_results_md():
     assert "was made before this change" not in README
     assert "replaced when the eval is rerun" not in README
+
+
+def test_readme_has_the_shows_and_does_not_show_section_with_a_new_call_label():
+    assert "## What the eval shows and does not show" in README
+    assert "**A NEW call of `python eval/show_raw.py q07 q08 q09`**, not the saved eval replies" in README
+    assert "has not caught a fake quote from the real model" in README
+    assert "The app does not show the reason, so we do not know whether the guard was involved." in README
+
+
+def test_readme_does_not_claim_the_check_prevents_fake_quotes_or_that_the_guard_works():
+    low = README.lower()
+    assert "not guarantees" in low  # the replacement wording
+    low = low.replace("not guarantees", "")  # the disclaimer itself may use the word
+    for bad in ("stays honest", "prevents", "guarantees", "the guard works", "guard works", "ensures"):
+        assert bad not in low, bad
+
+
+def test_readme_q07_limit_matches_the_new_call_and_keeps_scoring_unchanged():
+    assert "The scoring and the q07 expected answer were not changed" in README
+    assert "no words were added to the guard list" in README

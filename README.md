@@ -2,7 +2,7 @@
 
 A small tool for the Hacktoberfest Open-Source AI Challenge, Week 4: Ghost in the Machine.
 
-Pick a genre (Tech, Agri, Education), pick a person who shaped society but got little credit, and ask a ghost narrator about them. Answers come only from a fixed source text and always show the citation.
+Pick a genre (Tech, Agri, Education), pick a person who shaped society but got little credit, and ask a ghost narrator about them. The narrator is told to answer only from a fixed source text, and every answer the app shows comes with its citation.
 
 ## Status
 Work in progress. Started Wed Oct 28, 2026, inside the challenge window.
@@ -15,7 +15,7 @@ Submission deadline: Sun Nov 1, 2026, 09:59 EAT.
 | Safety check (`grounding.py`) | Written and unit-tested. |
 | People and source texts | 6 people added (2 Tech, 2 Agri, 2 Education). Excerpts copied from Wikipedia on 2026-10-29. |
 | Screen details | Shows the "Team note" for each person (labelled, not part of the source) and "Wikipedia contributors, CC BY-SA 4.0" with every citation |
-| Tests | 136 pass with a fake model, including a grounding test for each of the 6 people and a check that every excerpt fits a 4096-token context |
+| Tests | 141 pass with a fake model, including a grounding test for each of the 6 people and a check that every excerpt fits a 4096-token context |
 | Eval | 10 questions and a runner. Each model reply is judged with the grounding check ON and OFF. The Wambugu "which project failed" question (q07) is reported in its own row, outside the totals, because the code guard can pass it. Two real runs on the team laptop; the latest is in `eval/results.md` (see Eval results). |
 
 ## Open-source AI used
@@ -27,19 +27,19 @@ Submission deadline: Sun Nov 1, 2026, 09:59 EAT.
 - Licence: see the model page. Model page for the tag used in the team's run: [gemma4:e2b-it-qat on Ollama](https://ollama.com/library/gemma4:e2b-it-qat). More: [Gemma with Ollama (Google)](https://ai.google.dev/gemma/docs/integrations/ollama), [Gemma 4 in the Ollama library](https://ollama.com/library/gemma4).
 - The results below use `gemma4:e2b-it-qat` (4.3 GB; its model page lists quantization Q4_0). Google's Ollama guide says quantized models typically give lower quality output than the full ones.
 
-How the ghost stays honest:
+What the code does to keep the ghost to its source. These are rules and checks, not guarantees (see "What the eval shows and does not show"):
 
 | Rule | How it is done |
 |---|---|
 | Speaks about the person, never as the person | Instruction in the prompt (`narrator.py`) |
-| No invented quotes | Instruction in the prompt, plus a code check that rejects quoted words that are not in the excerpt |
+| No invented quotes | Instruction in the prompt, plus a code check that refuses an answer whose quoted words are not in the excerpt. Tested with a fake model; not yet seen catching a fake quote from the real model. |
 | Answers only from one excerpt | The prompt contains only that excerpt |
-| Every answer is backed by the source | The model must return a `supporting_quote`. Code checks it appears word for word in the excerpt (spaces and case ignored). If not: "That is not in my sources." |
+| Answers are tied to the source | The model is asked for a `supporting_quote`. Code checks that it appears word for word in the excerpt (spaces and case ignored). If not: "That is not in my sources." |
 | Living people (Perlman, Wambugu) | The prompt tells the model the person is living and to state only what the excerpt says. The narrator speaks about them, never as them. |
-| Vague wording in the source | The prompt says not to guess what a vague reference means. For Wambugu's 2004 line ("the project had failed"), a code guard also refuses any answer that says "fail" and names a project the excerpt does not name. |
+| Vague wording in the source | The prompt says not to guess what a vague reference means. For Wambugu's 2004 line ("the project had failed"), a code guard refuses an answer that says "fail" and also contains one of a short list of project words. It does not catch a project named in other words, and it has not been seen blocking an answer in the eval runs. |
 | Labelled | The screen says "AI-generated narration" |
 
-The check proves the quote is in the excerpt. It does not prove the answer is a good summary of that quote.
+A match proves only that the quote is in the excerpt. It does not prove the answer is a good summary of that quote, or that it answers the question.
 
 ## How to run
 1. Install [Ollama](https://ollama.com/download) and check it works: `ollama --version`
@@ -85,13 +85,35 @@ Run by the team on Fri Oct 30, 2026, 12:35 EAT (the time written in the header o
 - **q07 (Wambugu, reported separately, not in the totals): FAIL with grounding ON and with it OFF.** Both returned status `ok`. See Known limits.
 - Only verdicts were saved. The raw model replies from the two runs were not. `python eval/show_raw.py q07 q08 q09` asks the model again and prints the raw reply. A new call may not match the saved run word for word.
 
+## What the eval shows and does not show
+In plain words, for `gemma4:e2b-it-qat`, 10 questions, two full runs.
+
+**What it shows**
+- In both runs, no reply had a quote that failed the word-for-word check. The only reasons the app gave were `ok`, `empty_answer` and `empty_quote`. The reasons for a quote not in the excerpt, a quote invented inside the answer, or the guard never appeared.
+- ON and OFF differ mainly in how a refusal is shown. On q08 and q09, ON shows "That is not in my sources." because the quote is empty. OFF shows the model's own sentence. In the new call below, that sentence said the excerpt does not state it, so OFF's FAIL looks like a wording difference: the scoring wants the exact refusal string. The saved replies of the runs were not kept, so this is shown for the new call only.
+- The 5 answerable questions (q01 to q05) passed in both modes in both runs.
+
+**What it does not show**
+- The word-for-word check is tested with a fake model, but it has not caught a fake quote from the real model, because the real model did not produce one in these runs. How it behaves on a real fake quote is not known.
+- q07 is the known limit: the model gave a real quote that does not answer the question. The check passes because the quote is real. It cannot tell whether a real quote answers the question.
+- The Wambugu guard has not been seen blocking anything in the eval runs. It did not fire on q07 either: it needs a listed project word, and the answer had none. It is tested only with fake replies. In one app test (Wambugu, "Which project failed?", between 09:29 and 09:41 EAT on Fri Oct 30) the app said "That is not in my sources." The app does not show the reason, so we do not know whether the guard was involved.
+- Whether answers are good summaries. Also: 10 questions, one small quantized model, one laptop.
+
+**A NEW call of `python eval/show_raw.py q07 q08 q09`**, not the saved eval replies, made by the team on Fri Oct 30, 2026. The team reported what it printed. Exact JSON text is not copied here, except the q07 answer, which is quoted as the team pasted it.
+
+| Question | `answer` | `supporting_quote` | Grounding ON | Grounding OFF |
+|---|---|---|---|---|
+| q07 | "The project reported by New Scientist in February 2004 had failed." | A real quote from the excerpt (exact text not copied here) | Status `ok`. The guard did not fire: trigger word "fail" found, no listed project word. | Status `ok` (same reply) |
+| q08 | The model said the excerpt does not state it (exact wording not copied here) | Empty | "That is not in my sources." (`empty_quote`) | The model's own sentence, status `ok` (scored FAIL) |
+| q09 | The model said the excerpt does not state it (exact wording not copied here) | Empty | "That is not in my sources." (`empty_quote`) | The model's own sentence, status `ok` (scored FAIL) |
+
 ## Speed (as measured)
 - Eval script, over the 9 counted questions (q07's time is not in these averages): 32.8 s per question in the first run (09:59 EAT) and 21.7 s per question in the second run (12:35 EAT). Same model, same laptop.
 - App, same laptop: a team member saw two replies on Fri Oct 30, 2026, between 09:29 and 09:41 EAT: about 2 min 25 s and about 2 min 19 s. These figures were not recorded by the app or the eval script.
 - The eval and app numbers have not been reconciled, and the cause of the difference between the two eval runs has not been investigated. This README makes no other speed claim.
 
 ## Known limits
-- **q07 is not fixed.** "Which project did New Scientist say had failed in February 2004?" got status `ok` with grounding ON and OFF. For ON that means the quote was found in the excerpt and the guard did not fire. The guard (a word list in `data/people.json`) fires only when the answer contains "fail" and also one of: banana, sweet potato, tissue culture, KARI, John Innes, sorghum, Monsanto. The excerpt says only that "the project had failed" and never names it. The model's answer was not saved, so the cause is not yet known. Two possibilities are not yet separated: the answer named the project in words outside the list, or it said honestly that the excerpt does not say which (the scoring counts only a refusal as a pass). No words were added to the list to pass this question.
+- **q07 is not fixed.** "Which project did New Scientist say had failed in February 2004?" got status `ok` with grounding ON and OFF in both runs. In a new call (see "What the eval shows and does not show") the model answered "The project reported by New Scientist in February 2004 had failed." with a real quote from the excerpt and no project named. The quote check passes because the quote is real. The guard did not fire because it needs one of its listed project words (banana, sweet potato, tissue culture, KARI, John Innes, sorghum, Monsanto) and found none. So for this wording the app would show this answer, although it does not tell the reader which project. The scoring counts only the refusal "That is not in my sources." as a pass, so q07 is a FAIL. The scoring and the q07 expected answer were not changed, and no words were added to the guard list.
 - The guard is a short word list for one person. It can miss a wrong answer, and it can refuse a right one that mentions both a failure and a listed word.
 - Small test: 10 questions, 6 people, one model, one laptop, two full runs with the same results. It shows direction, not proof.
 - The default model `gemma4:e4b` was not run (too big for the 8 GB laptop). All results are for the small quantized `gemma4:e2b-it-qat`.
