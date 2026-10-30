@@ -34,7 +34,7 @@
       "genre": "Tech",
       "years": "1951-",
       "living": true,
-      "why_unsung": "Team note: her protocols run quietly inside networks, so few people know who designed them.",
+      "why_unsung": "Team note: she invented the Spanning Tree Protocol, which is fundamental to the operation of network bridges, and holds over 100 issued patents.",
       "sources": [
         {
           "title": "Radia Perlman - Wikipedia",
@@ -44,8 +44,8 @@
           "author": "Wikipedia contributors",
           "retrieved": "2026-10-29 23:54 EAT",
           "page_last_edited_utc": "2026-09-18 13:52",
-          "note": "Four passages re-copied from the live Wikipedia page on 2026-10-29 23:54 EAT, because the first copy differed from the live text. Whole sentences, in page order, never merged. Citation markers like [1] removed. Passages from different parts of the page are separated by a blank line. page_last_edited_utc is the value from the first copy; it was not re-read.",
-          "excerpt": "She is a major figure in assembling the networks and technology to enable what we now know as the Internet. She is most famous for her invention of the Spanning Tree Protocol (STP), which is fundamental to the operation of network bridges, while working for Digital Equipment Corporation, thus earning her nickname \"Mother of the Internet\", a title that she did not like. Her innovations have made a huge impact on how networks self-organize and move data. She also made large contributions to many other areas of network design and standardization – for example, enabling today's link-state routing protocols to be more robust, scalable, and easy to manage.\n\nPerlman invented the spanning tree algorithm and protocol. While working as a consulting engineer at DEC in 1984 she was tasked with developing a straightforward protocol that enabled network bridges to locate loops in a local area network (LAN). It was required that the protocol should use a constant amount of memory when implemented on the network devices, regardless of how large the network was. Building and expanding bridged networks was difficult because loops, where more than one path leads to the same destination, could result in the collapse of the network.\n\nPerlman was elected a member of the National Academy of Engineering in 2019 for contributions to Internet routing and bridging protocols. She holds over 100 issued patents. She was elected to the Internet Hall of Fame in 2014, and to the National Inventors Hall of Fame in 2016."
+          "note": "Four passages re-copied from the live Wikipedia page on 2026-10-29 23:54 EAT, because the first copy differed from the live text. Whole sentences, in page order, never merged. Citation markers like [1] removed. Passages from different parts of the page are separated by a blank line. page_last_edited_utc is the value from the first copy; it was not re-read. Passages put in live page order on 2026-10-30 09:08 EAT; no text was changed.",
+          "excerpt": "She is a major figure in assembling the networks and technology to enable what we now know as the Internet. She is most famous for her invention of the Spanning Tree Protocol (STP), which is fundamental to the operation of network bridges, while working for Digital Equipment Corporation, thus earning her nickname \"Mother of the Internet\", a title that she did not like. Her innovations have made a huge impact on how networks self-organize and move data. She also made large contributions to many other areas of network design and standardization – for example, enabling today's link-state routing protocols to be more robust, scalable, and easy to manage.\n\nPerlman was elected a member of the National Academy of Engineering in 2019 for contributions to Internet routing and bridging protocols. She holds over 100 issued patents. She was elected to the Internet Hall of Fame in 2014, and to the National Inventors Hall of Fame in 2016.\n\nPerlman invented the spanning tree algorithm and protocol. While working as a consulting engineer at DEC in 1984 she was tasked with developing a straightforward protocol that enabled network bridges to locate loops in a local area network (LAN). It was required that the protocol should use a constant amount of memory when implemented on the network devices, regardless of how large the network was. Building and expanding bridged networks was difficult because loops, where more than one path leads to the same destination, could result in the collapse of the network."
         }
       ]
     },
@@ -55,7 +55,7 @@
       "genre": "Tech",
       "years": "1930-2026",
       "living": false,
-      "why_unsung": "Team note: much of her work was classified, and the source says she did not get the recognition her white coworkers received.",
+      "why_unsung": "Team note: the source says she lacked recognition while her white coworkers received praise and added privileges, and that much of her work was classified as secret.",
       "sources": [
         {
           "title": "Gladys West - Wikipedia",
@@ -97,7 +97,7 @@
       "genre": "Agri",
       "years": "1953-",
       "living": true,
-      "why_unsung": "Team note: a Kenyan scientist working on African farm problems whose name is little known outside science. Her work is also debated.",
+      "why_unsung": "Team note: a Kenyan plant pathologist who developed a genetically modified virus-resistant sweet potato and researched banana tissue culture that helped banana farmers in Kenya. The source says her work has also been criticized.",
       "sources": [
         {
           "title": "Florence Wambugu - Wikipedia",
@@ -135,7 +135,7 @@
       "genre": "Education",
       "years": "1831-1897",
       "living": false,
-      "why_unsung": "Team note: she is often seen through her husband, and co-teachers like Fatima Sheikh get little credit.",
+      "why_unsung": "Team note: the source says she is often viewed through her association with her husband, Jyotirao Phule, but that scholars note she developed an independent perspective. The couple opened 18 schools.",
       "sources": [
         {
           "title": "Savitribai Phule - Wikipedia",
@@ -156,7 +156,7 @@
       "genre": "Education",
       "years": "1875-1927",
       "living": false,
-      "why_unsung": "Team note: schools across Africa, including in Kenya, carry his name, but few people know his story.",
+      "why_unsung": "Team note: he was the first Vice Principal of Achimota College, and Aggrey House at two Kenyan high schools, Kagumo and Alliance, is named after him.",
       "sources": [
         {
           "title": "James Emman Kwegyir Aggrey - Wikipedia",
