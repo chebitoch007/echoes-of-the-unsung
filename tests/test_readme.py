@@ -52,3 +52,8 @@ def test_readme_states_both_speed_figures_as_measured():
 def test_readme_keeps_required_submission_sections():
     for h in ("## AI disclosure", "## Team", "## Late commits"):
         assert h in README
+
+
+def test_readme_says_phule_is_in_live_page_order():
+    assert "has not been changed yet" not in README
+    assert "Savitribai Phule's seven passages are in the same order as on the live pages" in README

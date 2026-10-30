@@ -115,7 +115,7 @@ Run by the team on Fri Oct 30, 2026, 09:59 EAT. Laptop with 8 GB RAM (Windows), 
 - Each entry in `data/people.json` records the page title, URL, licence, the date copied and the page's last-edited time.
 - Excerpts were first copied from page text pasted by a team member on 2026-10-29. Four passages (two for Radia Perlman, two for Savitribai Phule) were then re-copied from the live pages on 2026-10-29 at 23:54 EAT (Nairobi time, from the build computer's clock, which was checked against real time on Fri Oct 30, 2026), because the first copy differed from the live text. The other four excerpts matched the live pages when checked. Citation markers like [1] were removed. Passages from different parts of a page are separated by a blank line.
 - The "Team note" lines (`why_unsung`) and the `years` field are written by the team. They are not Wikipedia text, and the app labels them. A Team note may only say what that person's excerpt supports, and a test checks this.
-- Radia Perlman's three passages are in the same order as on the live page. Savitribai Phule's passages are **not**: on the live page (checked Fri Oct 30, 2026) the "died of bubonic plague" sentence comes early, in the opening section, and the Kandukuri passage comes before the Usman Sheikh passage. The text is unchanged; only the order differs, and it has not been changed yet.
+- Radia Perlman's three passages and Savitribai Phule's seven passages are in the same order as on the live pages. Phule's were put in live page order on Fri Oct 30, 2026, after a live check; no text was changed.
 - Gemma 4: see the model page links above.
 
 | Person | Genre | Living | Source page | Page last edited (UTC) |

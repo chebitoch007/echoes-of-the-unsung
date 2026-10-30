@@ -219,6 +219,17 @@ def test_perlman_passages_follow_live_page_order():
     assert passages[2].startswith("Perlman invented the spanning tree")
 
 
+def test_phule_passages_follow_live_page_order():
+    # Live order checked on Fri Oct 30, 2026: opening section (1, 2, 3, plague line), then the
+    # Kandukuri passage, then the Usman Sheikh passage, then the legacy section.
+    passages = excerpt_of("savitribai-phule").split("\n\n")
+    starts = ["Along with her husband", "In 1848, they established", "In 1848, together with",
+              "She died of bubonic plague", "Kandukuri states", "After moving out", "Despite often being viewed"]
+    assert len(passages) == len(starts)
+    for passage, start in zip(passages, starts):
+        assert passage.startswith(start)
+
+
 # For each person: phrases from the excerpt that every claim in the Team note rests on.
 NOTE_SUPPORT = {
     "radia-perlman": ["invention of the Spanning Tree Protocol", "fundamental to the operation of network bridges",
