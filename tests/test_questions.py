@@ -33,3 +33,9 @@ def test_not_in_excerpt_terms_really_absent_from_excerpt():
         if q["type"] == "not_in_excerpt":
             assert q["absent_terms"], q["id"]
             assert not any(t.lower() in excerpt(q) for t in q["absent_terms"]), q["id"]
+
+
+def test_exactly_one_question_is_reported_separately_and_it_is_the_wambugu_project_one():
+    sep = [q for q in QUESTIONS if q.get("report_separately")]
+    assert [q["id"] for q in sep] == ["q07"]
+    assert sep[0]["person_id"] == "florence-wambugu" and "project" in sep[0]["question"].lower()

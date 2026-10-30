@@ -63,7 +63,8 @@
     "id": "q07",
     "person_id": "florence-wambugu",
     "type": "trap",
-    "question": "Which project did New Scientist say had failed in February 2004?"
+    "question": "Which project did New Scientist say had failed in February 2004?",
+    "report_separately": true
   },
   {
     "id": "q08",
